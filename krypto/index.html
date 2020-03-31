@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset= "UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond&display=swap" rel="stylesheet">
+    <style>
+      .card {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      text-align: center;
+      width: 100px;
+      height: 100px;
+      border: 3px solid black;
+      padding: 10px;
+      border-radius: 25px;
+      margin: 10px;
+      }
+      .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      text-align: left;
+      padding: 10px;
+      margin: 10px;
+      }
+      .rules {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      text-align: left;
+      padding: 10px;
+      margin: 10px;
+      }
+      .button {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 25px;
+      margin: 100px 10px 10px 10px;
+      border: 2px solid #4CAF50;
+      background-color: #ffffff;
+      color: #000000;
+      outline: none;
+      transition-duration: 0.4s;
+      }
+      .button:active {
+	  background-color: #4CAF50;
+	  color: #ffffff;
+      }
+      .text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      text-align: left;
+      padding: 10px;
+      margin: 10px;
+      display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title">Cards</div>
+    <div id="c1" class="card">1</div>
+    <div id="c2" class="card">2</div>
+    <div id="c3" class="card">3</div>
+    <div id="c4" class="card">4</div>
+    <div id="c5" class="card">5</div>
+    <div class="title">Objective</div>
+    <div id="c6" class="card">6</div>
+    <button class="button" onclick="showAnswers()">Show answers</button>
+    <div id="answers" class="text"></div>
+    <hr>
+    <div class="rules"><a href="https://en.wikipedia.org/wiki/Krypto_(game)">About this game</a></div>
+    <script src="krypto.js"></script>
+
+  </body>
+</html>
