@@ -22,14 +22,14 @@
       padding: 10px;
       margin: 10px;
       }
-      .rules {
+      #rules {
       font-family: 'Cormorant Garamond', serif;
       font-size: 20px;
       text-align: left;
       padding: 10px;
       margin: 10px;
       }
-      .button {
+      #showanswer {
       font-family: 'Cormorant Garamond', serif;
       font-size: 64px;
       text-align: center;
@@ -42,17 +42,27 @@
       outline: none;
       transition-duration: 0.4s;
       }
-      .button:active {
+      #showanswer:active {
 	  background-color: #4CAF50;
 	  color: #ffffff;
       }
-      .text {
+      #ansdiv {
       font-family: 'Cormorant Garamond', serif;
       font-size: 32px;
       text-align: left;
-      padding: 10px;
       margin: 10px;
       display: none;
+      }
+      #anstab {
+      border: 0px;
+      display: none;
+      }
+      #anstab td {
+      border: 0px;
+      }
+      #anstab tbody tr td {
+      text-align: right;
+      padding: 0px 5px 0px 5px;
       }
     </style>
   </head>
@@ -65,11 +75,12 @@
     <div id="c5" class="card">5</div>
     <div class="title">Objective</div>
     <div id="c6" class="card">6</div>
-    <button class="button" onclick="showAnswers()">Show answers</button>
-    <div id="answers" class="text"></div>
+    <button id="showanswer" onclick="showAnswers()">Show answers</button>
+    <div id="ansdiv" class="text">
+      <table id="anstab" class="text"></table>
+    </div>
     <hr>
-    <div class="rules"><a href="https://en.wikipedia.org/wiki/Krypto_(game)">About this game</a></div>
+    <div id="rules"><a href="https://en.wikipedia.org/wiki/Krypto_(game)">About this game</a></div>
     <script src="krypto.js"></script>
-
   </body>
 </html>

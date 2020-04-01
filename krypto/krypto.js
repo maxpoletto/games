@@ -21,7 +21,6 @@ function init() {
         c.innerHTML = v;
 	picks[i-1] = v;
     }
-    console.log(picks);
 }
 
 // Generates all permutations of arr using Heap's iterative algorithm.
@@ -168,19 +167,25 @@ function solve(nums, goal) {
 // Populates the 'answers' div of the Krypto game page.
 function showAnswers() {
     var solutions = solve(picks.slice(0, picks.length-1), picks[picks.length-1]);
-    var answers = document.getElementById('answers');
+    var ansdiv = document.getElementById('ansdiv');
     if (solutions.length == 0) {
-	answers.innerHTML = "There are no solutions!"
+	ansdiv.innerHTML = "There are no solutions!"
     } else {
+	var anstab = document.getElementById('anstab');
+	anstab.innerHTML = "";
 	solutions.sort();
-	answers.innerHTML = "";
 	for (var sol of solutions) {
-	    var item = document.createElement('div');
-	    item.innerHTML = sol;
-	    answers.appendChild(item);
+	    var terms = sol.split(' ');
+	    terms.pop();
+	    var row = anstab.insertRow(-1);
+	    for (var term of terms) {
+		var cell = row.insertCell(-1);
+		cell.innerHTML = term;
+	    }
 	}
+	anstab.style.display = 'table';
     }
-    answers.style.display = 'block';
+    ansdiv.style.display = 'block';
 }
 
 init();
