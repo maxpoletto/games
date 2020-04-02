@@ -8,7 +8,7 @@ function getRandomInt(max) {
 }
 
 // Initializes a random set of playing cards on the Krypto game page.
-function init() {
+function init_game() {
     var a = [ 1, 2, 3, 4, 5, 6 ],
         b = [ 7, 8, 9, 10 ],
         c = [ 11, 12, 13, 14, 15, 16, 17 ],
@@ -101,10 +101,14 @@ function tree_eval(t, a) {
 	    var y = s.pop(), x = s.pop(), r = -1;
 	    switch (e) {
 	    case '+': r = x+y; break
-	    case '-': r = x-y; break
+	    case '-':
+		// Omit x-0, since we generate x+0.
+		if (y > 0) { r = x-y; }
+		break
 	    case '*': r = x*y; break
 	    case '/':
-		if (y > 0 && x % y == 0) { r = x/y; }
+		// Omit x/1, since we generate x*1.
+		if (y > 1 && x % y == 0) { r = x/y; }
 		break
 	    }
 	    if (r < 0) {
@@ -187,5 +191,3 @@ function showAnswers() {
     }
     ansdiv.style.display = 'block';
 }
-
-init();
