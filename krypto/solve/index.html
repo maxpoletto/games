@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset= "UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond&display=swap" rel="stylesheet">
+    <style>
+      .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      text-align: left;
+      padding: 10px;
+      margin: 10px;
+      }
+      #rules {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      text-align: left;
+      padding: 10px;
+      margin: 10px;
+      }
+      .button {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 25px;
+      margin: 100px 10px 10px 10px;
+      border: 2px solid #4CAF50;
+      background-color: #ffffff;
+      color: #000000;
+      outline: none;
+      transition-duration: 0.4s;
+      }
+      #why {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      text-align: left;
+      padding: 0px;
+      margin: 0px;
+      border: 0px;
+      background-color: #ffffff;
+      color: lightblue;
+      outline: none;
+      }
+      #solve {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 25px;
+      margin: 10px 10px 10px 0px;
+      border: 2px solid #4CAF50;
+      background-color: #ffffff;
+      color: #000000;
+      outline: none;
+      transition-duration: 0.4s;
+      }
+      #solve:active {
+	  background-color: #4CAF50;
+	  color: #ffffff;
+      }
+      .cc {
+	  color: red;
+      }
+      #entry {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      text-align: left;
+      margin: 10px;
+      }
+      #ansdiv {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      text-align: left;
+      margin: 10px;
+      display: none;
+      }
+      #explanation {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      text-align: left;
+      margin: 10px;
+      display:none;
+      }
+      #anstab {
+      border: 0px;
+      display: none;
+      }
+      #anstab td {
+      border: 0px;
+      }
+      #anstab tbody tr td {
+      text-align: right;
+      padding: 0px 5px 0px 5px;
+      }
+      #entry p {
+	  margin: 0px;
+      }
+      #error {
+	  margin-top: 10px;
+	  margin-bottom: 0px;
+	  padding: 10px;
+	  border: 2px solid red;
+	  display:none;
+      }
+      input {
+	  font-family: 'Cormorant Garamond', serif;
+	  font-size: 32px;
+	  border: 1px solid black;
+      }
+    </style>
+    <title>Krypto solver</title>
+  </head>
+  <body>
+    <div id="entry">
+      <p>Please enter between two and seven (<button id="why" onclick="toggleExplanation()">why?</button>) card values:</p>
+      <p><input id="cards"></p>
+      <p>Please enter the objective:</p>
+      <p><input id="objective"></p>
+      <div id="error"></div>
+      <button id="solve" onclick="solveGame()">Solve</button>
+    </div>
+    <div id="explanation">
+      <p>An arithmetic expression with seven operands (and therefore
+	six operators) can be represented by a "full" binary tree (one
+	in which every internal node has two children) with seven
+	leaves and six internal nodes. The number of such trees with n
+	internal nodes is given by the Catalan number n, C_n = (2n)! /
+	(n!(n+1)!). With 6 nodes, that works out to 132 distinct
+	trees.</p>
+      <p>For each tree, each of the six operators can be one of plus,
+	minus, times, or divide, for a total of 4^6 = 4096 combinations.</p>
+      <p>And the seven operands can appear in 7! = 5040 permutations.</p>
+      <p>Multiplying this all out, you get 132 * 4096 * 5040, just shy
+	of three billion. With 8 operands, the number climbs to over
+	70 billion.</p>
+      <p>This solver is clever about eliminating duplicates (e.g., 2+3
+	= 3+2), but still, the complexity grows so quickly that for
+	good performance we recommend sticking to expressions of 5-6
+	terms.</p>
+    </div>
+    <div id="ansdiv" class="text">
+      <hr>
+      <table id="anstab" class="text"></table>
+    </div>
+    <div id="rules">
+      <hr>
+      <a href="https://en.wikipedia.org/wiki/Krypto_(game)">About this game</a>
+    </div>
+    <script src="../krypto.js"></script>
+  </body>
+</html>

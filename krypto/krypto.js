@@ -1,5 +1,12 @@
 'use strict';
 
+var dbgTrees = true;
+var dbgExpr = true;
+var dbgSummary = true;
+var dbgSkip1 = false;
+var dbgSkip2 = false;
+var dbgSkip3 = false;
+
 var picks = [ 1, 2, 3, 4, 5, 6 ];
 
 // Generates a random integer in [0, max-1].
@@ -8,7 +15,7 @@ function getRandomInt(max) {
 }
 
 // Initializes a random set of playing cards on the Krypto game page.
-function init_game() {
+function initGame() {
     var a = [ 1, 2, 3, 4, 5, 6 ],
         b = [ 7, 8, 9, 10 ],
         c = [ 11, 12, 13, 14, 15, 16, 17 ],
@@ -58,25 +65,29 @@ function permutations(arr) {
 //
 // The return value is an array of RPN strings containing the operator
 // characters and 'x' to denote operands.
-var trees_seen; // Set of previously seen subtrees (for commutativity).
 var comm = ['+', '*'], noncomm = ['-', '/'];
 function trees(n) {
     if (n == 1) {
 	return ['x'];
     }
     var res = [];
+    var treeSeen = new Set(); // Set of previously seen subtrees (for commutativity).
     for (var i = 1; i < n; i++) {
 	var tl = trees(i), tr = trees(n-i);
 	for (var r of tr) {
 	    for (var l of tl) {
 		for (var op of comm) {
-		    if (trees_seen.has(r + l + op)) {
+		    if (treeSeen.has(r + l + op)) {
 			// Eliminate duplicate commutative operations.
+			if (dbgSkip1) {
+			    console.log("Skipping @1 '" + [l, r, op].join(":") +
+					"' because '" + [r, l, op].join(":") + "' exists");
+			}
 			continue;
 		    }
 		    var e = l + r + op;
 		    res.push(e);
-		    trees_seen.add(e);
+		    treeSeen.add(e);
 		}
 		for (var op of noncomm) {
 		    res.push(l + r + op);
@@ -92,7 +103,7 @@ function trees(n) {
 // values in a, and evaluates the corresponding expression. If any of
 // the intermediate results is negative or non-integer, immediately
 // returns -1.
-function tree_eval(t, a) {
+function treeEval(t, a) {
     var s = [], i = 0;
     for (var e of t) {
 	if (e == 'x') {
@@ -100,16 +111,16 @@ function tree_eval(t, a) {
 	} else {
 	    var y = s.pop(), x = s.pop(), r = -1;
 	    switch (e) {
-	    case '+': r = x+y; break
+	    case '+': r = x+y; break;
 	    case '-':
 		// Omit x-0, since we generate x+0.
 		if (y > 0) { r = x-y; }
-		break
-	    case '*': r = x*y; break
+		break;
+	    case '*': r = x*y; break;
 	    case '/':
 		// Omit x/1, since we generate x*1.
 		if (y > 1 && x % y == 0) { r = x/y; }
-		break
+		break;
 	    }
 	    if (r < 0) {
 		return -1;
@@ -121,24 +132,45 @@ function tree_eval(t, a) {
 }
 
 // Pretty-prints the RPN expression t applied to the array of integers
-// a, as defined for tree_eval() above, converting from RPN to a
+// a, as defined for treeEval() above, converting from RPN to a
 // series of in-order binary operations with intermediate results.
-function tree_print(t, a) {
-    var s = [], i = 0, res = "";
+var exprSeen;
+var sb = '<span class="cc">', se = '</span>';
+function treePrint(t, a) {
+    var evalStk = [], dupStk = [], i = 0, res = "";
     for (var e of t) {
 	if (e == 'x') {
-	    s.push(a[i++]);
+	    evalStk.push(a[i]);
+	    dupStk.push(a[i]);
+	    ++i;
 	} else {
-	    var y = s.pop(), x = s.pop(), r;
+	    var y = evalStk.pop(), x = evalStk.pop(), r;
+	    var dy = dupStk.pop(), dx = dupStk.pop();
 	    switch (e) {
-	    case '+': r = x+y; break
-	    case '-': r = x-y; break
-	    case '*': r = x*y; break
+	    case '+': r = x+y; break;
+	    case '-': r = x-y; break;
+	    case '*': r = x*y; break;
 	    case '/': r = x/y; break;
 	    }
-	    s.push(r);
-	    res += x + e + y + "=" + r + " "
+	    var expr;
+	    if (e == '+' || e == '*') {
+		expr = [dy, dx, e].join(';');
+		if (exprSeen.has(expr)) {
+		    if (dbgSkip2) {
+			console.log("Skipping @2 because " + expr + " exists");
+		    }
+		    return '';
+		}
+	    }
+	    evalStk.push(r);
+	    expr = [dx, dy, e].join(';');
+	    dupStk.push(expr);
+	    exprSeen.add(expr);
+	    res += x + e + y + "=" + r + ";";
 	}
+    }
+    if (dbgExpr) {
+	console.log("Applied " + t + " to " + a + " to obtain " + dupStk.pop() + " / " + res);
     }
     return res;
 }
@@ -147,30 +179,46 @@ function tree_print(t, a) {
 // array of all the arithmetic operations (modulo commutative
 // duplicates) that use each integer exactly once to produce goal.
 function solve(nums, goal) {
-    trees_seen = new Set();
-    var ans_seen = new Set(), ans = [];
-    for (var t of trees(nums.length)) {
+    exprSeen = new Set();
+    var opsSeen = new Set(), ans = [];
+    var tt = trees(nums.length);
+    if (dbgTrees) {
+	console.log(tt);
+    }
+    var nGoal = 0;
+    for (var t of tt) {
 	for (var a of permutations(nums)) {
-	    var n = tree_eval(t, a);
+	    var n = treeEval(t, a);
 	    if (n == goal) {
-		var p = tree_print(t, a);
-		if (!ans_seen.has(p)) {
+		++nGoal;
+		var p = treePrint(t, a);
+		if (p == "" || opsSeen.has(p)) {
 		    // More duplicate elimination. Expression trees
-		    // are distinct, but two trees may result in the
-		    // same computation given a different permutation
-		    // of inputs.
-		    ans_seen.add(p);
-		    ans.push(p);
+		    // are distinct at this point, but two trees may result in the
+		    // same series of operations given a different permutation
+		    // of inputs. Example:
+		    // RPN tree xxxx-/- applied to [4,2,3,1] and
+		    // RPN tree xxx-x/- applied to [4,3,1,2] both
+		    // result in operations 3-1=2, 2/2=1, 4-1=3.
+		    if (dbgSkip3) {
+			console.log("Skipping @3 for " + p);
+		    }
+		    continue;
 		}
+		opsSeen.add(p);
+		ans.push(p);
 	    }
 	}
+    }
+    if (dbgSummary) {
+	console.log("Trees satisfying objective: " + nGoal);
+	console.log("After duplicate elimination : " + ans.length);
     }
     return ans;
 }
 
-// Populates the 'answers' div of the Krypto game page.
-function showAnswers() {
-    var solutions = solve(picks.slice(0, picks.length-1), picks[picks.length-1]);
+// Populates the 'answers' div of the Krypto game page with solutions.
+function showSolutions(solutions) {
     var ansdiv = document.getElementById('ansdiv');
     if (solutions.length == 0) {
 	ansdiv.innerHTML = "There are no solutions!"
@@ -179,7 +227,7 @@ function showAnswers() {
 	anstab.innerHTML = "";
 	solutions.sort();
 	for (var sol of solutions) {
-	    var terms = sol.split(' ');
+	    var terms = sol.split(';');
 	    terms.pop();
 	    var row = anstab.insertRow(-1);
 	    for (var term of terms) {
@@ -190,4 +238,51 @@ function showAnswers() {
 	anstab.style.display = 'table';
     }
     ansdiv.style.display = 'block';
+}
+
+function showAnswers() {
+    showSolutions(solve(picks.slice(0, picks.length-1), picks[picks.length-1]));
+}
+
+function showError(msg) {
+    var box = document.getElementById('error');
+    box.innerHTML = msg;
+    box.style.display = 'block';
+}
+function hideError() {
+    var box = document.getElementById('error');
+    box.style.display = 'none';
+}
+
+var reCards = /^\s*\d+\s+\d+[\d\s]*$/,
+    reObj = /\d+/,
+    reSplit = /\s+/;
+function solveGame() {
+    var cards = document.getElementById('cards'),
+	objective = document.getElementById('objective');
+    if (!cards.value.match(reCards)) {
+	showError("Please provide 2 to 7 integers for the card values.");
+	return;
+    }
+    if (!objective.value.match(reObj)) {
+	showError("Please provide an integer for the objective.");
+	return;
+    }
+    var cvals = cards.value.split(reSplit).map(function(n) { return parseInt(n); }),
+	oval = parseInt(objective.value);
+    if (cvals.length > 7) {
+	showError("Too many card values; you'd be waiting a long time!");
+	return;
+    }
+    hideError();
+    showSolutions(solve(cvals, oval));
+}
+
+function toggleExplanation() {
+    var x = document.getElementById("explanation");
+    if (x.style.display == 'block') {
+	x.style.display = 'none';
+    } else {
+	x.style.display = 'block';
+    }
 }
