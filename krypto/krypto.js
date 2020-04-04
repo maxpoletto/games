@@ -188,25 +188,15 @@ function solve(nums, goal) {
     var nGoal = 0;
     for (var t of tt) {
 	for (var a of permutations(nums)) {
+	    // Evaluate trees separately from printing them to quickly
+	    // remove the many that do not evaluate to the goal.
 	    var n = treeEval(t, a);
 	    if (n == goal) {
 		++nGoal;
 		var p = treePrint(t, a);
-		if (p == "" || opsSeen.has(p)) {
-		    // More duplicate elimination. Expression trees
-		    // are distinct at this point, but two trees may result in the
-		    // same series of operations given a different permutation
-		    // of inputs. Example:
-		    // RPN tree xxxx-/- applied to [4,2,3,1] and
-		    // RPN tree xxx-x/- applied to [4,3,1,2] both
-		    // result in operations 3-1=2, 2/2=1, 4-1=3.
-		    if (dbgSkip3) {
-			console.log("Skipping @3 for " + p);
-		    }
-		    continue;
+		if (p.length > 0) {
+		    ans.push(p);
 		}
-		opsSeen.add(p);
-		ans.push(p);
 	    }
 	}
     }
