@@ -1,0 +1,111 @@
+body, button, input {
+    font-family: 'Cormorant Garamond', serif;
+}
+
+/* Card game */
+.title {
+    font-size: 64px;
+    text-align: left;
+    margin: 10px;
+}
+.card {
+    font-size: 64px;
+    text-align: center;
+    width: 100px;
+    height: 100px;
+    border: 3px solid black;
+    border-radius: 25px;
+    margin: 10px;
+    padding: 10px;
+}
+#rules {
+    font-size: 20px;
+    text-align: left;
+    margin: 10px;
+}
+
+/* Buttons */
+#why {
+    font-size: 32px;
+    text-align: left;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    background-color: #ffffff;
+    color: lightblue;
+    outline: none;
+}
+.button {
+    text-align: center;
+    padding: 10px;
+    border-radius: 25px;
+    border: 2px solid #4CAF50;
+    background-color: #ffffff;
+    color: #000000;
+    outline: none;
+    transition-duration: 0.4s;
+}
+.button:active {
+    background-color: #4CAF50;
+    color: #ffffff;
+}
+#solveInputs {
+    font-size: 32px;
+    margin: 10px 10px 10px 0px;
+}
+#solveCards {
+    font-size: 64px;
+    margin: 100px 10px 10px 10px;
+}
+
+/* Solver */
+
+#entry {
+    font-size: 32px;
+    text-align: left;
+    margin: 10px;
+}
+#entry p {
+    margin: 0px;
+}
+input {
+    font-size: 32px;
+    border: 1px solid black;
+}
+#error {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    padding: 10px;
+    border: 2px solid red;
+    display:none;
+}
+#explanation {
+    font-size: 20px;
+    text-align: left;
+    margin: 0px 10px 10px 10px;
+    display:none;
+}
+
+/* Outputs */
+#ansdiv {
+    font-size: 32px;
+    text-align: left;
+    margin: 10px;
+}
+#noans {
+    display:none;
+}
+#anstab {
+    border: 0px;
+    display: none;
+}
+#anstab td {
+    border: 0px;
+}
+#anstab tbody tr td {
+    text-align: right;
+    padding: 0px 5px 0px 5px;
+}
+.cc {
+    color: red;
+}
